@@ -2,7 +2,18 @@ import db from "../../db/connection.js";
 
 export const list = async (req, res, next) => {
 	try {
-		const blogs = await db.query(`SELECT * FROM blogs`);
+		const blogs = await db.query(`SELECT 
+		blog.blog_id,
+		blog.author_id ,
+		blog.title,
+		blog.content,
+		blog.created_at,
+		author.author_id,
+		author.name,
+		author.last_name,
+		author.avatar
+		FROM blogs AS blog
+		INNER JOIN authors AS author ON blog.author_id=author.author_id ORDER BY blog.created_at DESC;`);
 		res.send(blogs.rows);
 	} catch (error) {
 		res.status(500).send(error);
@@ -32,7 +43,20 @@ export const single = async (req, res, next) => {
 	try {
 		const { blog_id } = req.params;
 		const blogs = await db.query(
-			`SELECT * FROM blogs WHERE blog_id=${blog_id};`
+			`SELECT 
+			blog.blog_id,
+			blog.author_id ,
+			blog.title,
+			blog.content,
+			blog.created_at,
+			author.author_id,
+			author.name,
+			author.last_name,
+			author.avatar
+			FROM blogs AS blog
+			INNER JOIN authors AS author ON blog.author_id=author.author_id 
+			WHERE blog.blog_id = '${blog_id}'
+			ORDER BY blog.created_at DESC;`
 		);
 		const [found, ...rest] = blogs.rows;
 
